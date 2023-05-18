@@ -22,7 +22,6 @@ namespace MyPlagin
             countEmptyLines = pCountEmptyLines;
             countKeyWords = pCountKeyWords;
         }
-
         public string getNameFunction()
         {
             return nameFunction;

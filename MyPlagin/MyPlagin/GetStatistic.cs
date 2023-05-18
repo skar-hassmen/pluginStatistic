@@ -19,13 +19,12 @@ namespace MyPlagin
 
         protected readonly Regex mFunctionBeginningPattern = new Regex(@"([_a-zA-Z0-9*]+)\s*\**\s*([a-zA-Z0-9*]+)\s*\((.*\n*)*?.*\)\s*\n*\s*\{");
         protected readonly Regex mFunctionParaments = new Regex("\\(\".*\\n*\"\\)");
-        protected readonly Regex mClassNamePattern = new Regex(@"(\S+)\s*\**\s(\S+)\s*\((?!\!)(?!\?).*\)[\r*\n*\t*]* *\{");
 
-        protected readonly Regex mTextInsideQuot = new Regex("(\".*? \")");
-
+        protected readonly Regex mTextInsideQuot = new Regex(@"("".*\n*?.*"")"); 
+        protected readonly Regex mTextInsideQuot1 = new Regex(@"(\'.*\n*?.*\')");
+        
         protected readonly Regex mMultilineComment = new Regex("\\/\\*[\\s\\S]*?\\*\\/\\n?");
         protected readonly Regex mOnelineComment = new Regex(@"\/\/(?:(?:\\\n)|\\|(?!\\).)*\n");
-
 
 
         private string[] mKeyWords = {
@@ -35,7 +34,7 @@ namespace MyPlagin
             "mutable", "namespace", "new", "noexcept", "not", "not_eq", "nullptr", "operator", "or", "or_eq", "private", "protected", "public",
             "register", "reinterpret_cast", "return", "short", "signed", "sizeof", "static", "static_assert", "static_cast", "struct", "switch", "template",
             "this", "thread_local", "throw", "true", "try", "typedef", "typeid", "typename", "union", "unsigned", "using", "virtual", "void", "volatile",
-            "wchar_t", "while", "xor", "xor_eq", "struct"
+            "wchar_t", "while", "xor", "xor_eq", "struct", "reinterpret_cast"
         };
 
         public GetStatistic(Document document)
@@ -60,7 +59,7 @@ namespace MyPlagin
                 if (elt_1.Kind == vsCMElement.vsCMElementFunction)
                 {
                     var elt = elts.Item(i) as CodeFunction;
-                    string functionName = elt.FullName;
+                    string functionName = elt.FullName; //name
                     int functionLines = FunctionLineCounter(elt);
                     string functionText = CodeFunctionToString(elt);
 
@@ -105,44 +104,56 @@ namespace MyPlagin
                 functionText = ReplaceFirstOccurrence(functionText, match.Value, "");
 
             MatchCollection insideQuotForString = mTextInsideQuot.Matches(functionText);
-            int startIndex, flag = 0, endIndex = 0; 
             foreach (Match match in insideQuotForString)
             {
-                int j = functionText.IndexOf(match.Value) - 1;
-                startIndex = j;
-                while (j >= 0 && functionText[j] != '\n')
-                {
-                    if (functionText[j] == ';')
-                    {
-                        flag = 1;
-                        endIndex = j;
-                        break;
-                    }
+                int k = match.Value.IndexOf('\n');
+                if (k > -1) countComments++;
+                functionText = ReplaceFirstOccurrence(functionText, match.Value, "");
+            }
 
-                    j++;
-                }
-                if (flag == 1)
-                {
-                    functionText = ReplaceFirstOccurrence(functionText, functionText.Substring(startIndex, endIndex + 1 - startIndex), "");
-                    flag = 0;
-                }
-                else
-                {
-                    functionText = ReplaceFirstOccurrence(functionText, match.Value, "");
-                }
+            MatchCollection insideQuotForString1 = mTextInsideQuot1.Matches(functionText);
+            foreach (Match match in insideQuotForString1)
+            {
+                int k = match.Value.IndexOf('\n');
+                if (k > -1) countComments++;
+                functionText = ReplaceFirstOccurrence(functionText, match.Value, "");
             }
 
 
             MatchCollection multiLineComments = mMultilineComment.Matches(functionText);
             foreach (Match match in multiLineComments)
-                functionText = ReplaceFirstOccurrence(functionText, match.Value, "");
+            {
+                int j = functionText.IndexOf(match.Value) - 1;
+                int tmp = 0;
+                int ttt = 0;
+                while (j >= 0)
+                {
+                    if (functionText[j] == '\n')
+                    {
+                        if (j > 0 && functionText[j - 1] == '\\') tmp = 1;
+                        break;
+                    }
+                    if (ttt == 0 && functionText[j] != ' ') ttt = 1;
+                    if (functionText[j] == '/')
+                    {
+                        tmp = 1;
+                        break;
+                    }
+                    j--;
+                }
+                if (tmp == 0)
+                {
+                    if (ttt == 1) countComments++;
+                    functionText = ReplaceFirstOccurrence(functionText, match.Value, "");
+                }
+            }
 
 
             MatchCollection oneLineComment = mOnelineComment.Matches(functionText);
             foreach (Match match in oneLineComment)
             {
                 int j = functionText.IndexOf(match.Value) - 1;
-                if (j >= 0 && functionText[j] == '\n')
+                if (j >= 0 && functionText[j] == '\n')  
                 {
                     countNoComments++;
                 }
@@ -165,7 +176,7 @@ namespace MyPlagin
 
             
 
-            countComments = functionText.Count(v => v == '\n') + countNoComments;
+            countComments += functionText.Count(v => v == '\n') + countNoComments;
 
             int countKeyName = 0;
             for (int i = 0; i < mKeyWords.Length; ++i)

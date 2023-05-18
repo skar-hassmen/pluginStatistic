@@ -1,21 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\labs\\Desktop\\MyPlagin\\MyPlagin\\MyPlagin.csproj": {}
+    "C:\\Users\\RiftFate\\Desktop\\MyPlagin\\MyPlagin\\MyPlagin.csproj": {}
   },
   "projects": {
-    "C:\\Users\\labs\\Desktop\\MyPlagin\\MyPlagin\\MyPlagin.csproj": {
+    "C:\\Users\\RiftFate\\Desktop\\MyPlagin\\MyPlagin\\MyPlagin.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\labs\\Desktop\\MyPlagin\\MyPlagin\\MyPlagin.csproj",
+        "projectUniqueName": "C:\\Users\\RiftFate\\Desktop\\MyPlagin\\MyPlagin\\MyPlagin.csproj",
         "projectName": "MyPlagin",
-        "projectPath": "C:\\Users\\labs\\Desktop\\MyPlagin\\MyPlagin\\MyPlagin.csproj",
-        "packagesPath": "C:\\Users\\labs\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\labs\\Desktop\\MyPlagin\\MyPlagin\\obj\\",
+        "projectPath": "C:\\Users\\RiftFate\\Desktop\\MyPlagin\\MyPlagin\\MyPlagin.csproj",
+        "packagesPath": "C:\\Users\\RiftFate\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\RiftFate\\Desktop\\MyPlagin\\MyPlagin\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "configFilePaths": [
-          "C:\\Users\\labs\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\RiftFate\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
